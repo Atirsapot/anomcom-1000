@@ -1,13 +1,20 @@
 import React, { useRef, useState } from 'react';
 import './App.css';
 
+
+// importataan tarvittavat firebasen ominaisuudet
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 
+
+//importataan työkalut kirjautumistietoihin authilla,
+//ja viestien tallentamiseen firestorella
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 
+
+//firebasen web app tunnarit
 firebase.initializeApp({
   apiKey: "AIzaSyA-9z_jVEZvjE8Y9n5aunKZqBDzDSPZv1w",
   authDomain: "chat-3b8fe.firebaseapp.com",
@@ -21,11 +28,19 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
+//Sovelluksen alotussivu. 
+//Näytetään ensin kirjaudu sisään-nappi, 
+//jonka jälkeen aukeaa itse chatti eli ChatRoom
 function App() {
-
+ 
+  // määrittää "userin" firebasen auth statella 
   const [user] = useAuthState(auth);
 
   return (
+
+    // user user ? <ChatRoom /> : <SignIn/> tarkastaa onko "user" määritetty.
+    // Mikäli on, näytetään ChatRoom, 
+    // mikäli ei, näytetään kirjautumisnappula.
     <div className="App">
       <header>
         <h1>ANOMCOM-1000</h1>
@@ -33,6 +48,7 @@ function App() {
       </header>
 
       <section >
+
         {user ? <ChatRoom /> : <SignIn/>}
       </section>
 
@@ -40,6 +56,11 @@ function App() {
   );
 }
 
+
+// Sisäänkirjautuminen. 
+// Firebasen sisäänrakennettu kirjautumistyökalu. 
+// Jos käyttäjää ei ole määritetty, näyttää kirjautumisnappulan.
+// Kirjautumisnappula avaa popupkirjautumisikkunan.
 function SignIn() {
 
   const signInWithGoogle = () => {
@@ -60,27 +81,40 @@ function SignIn() {
 
 }
 
+
+// Uloskirjautuminen chatistä. 
+// Kirjaa käyttäjän ulos chatistä.
+// TODO: Lisää lähetettyjen viestien tyhjentäminen
 function SignOut() {
   return auth.currentUser && (
-    <button className="sign-out" onClick={() => auth.signOut()}>Sign Out</button>
+    <button className="sign-out" onClick={() => auth.signOut()}>DISCONNECT</button>
   )
 }
+
+
+// Varsinainen Chatikkuna.
+
+// 
 
 function ChatRoom() {
   const dummy = useRef();
   const messagesRef = firestore.collection('messages');
   const query = messagesRef.orderBy('createdAt').limit(25);
-
+  
+  // Hakee Firebasesta taulukkoon [messages] 25 viimeisintä viestiä. 
+  // Jokaisella viestillä on myös lähettäjä ID
   const [messages] = useCollectionData(query, { idField: 'id' });
 
   const [formValue, setFormValue] = useState('');
 
-
+  // Viestin tallentaminen
   const sendMessage = async (e) => {
     e.preventDefault();
 
     const { uid } = auth.currentUser;
 
+    // lisää kirjoitetun viestin sisällön, ajan,
+    // sekä käyttäjäIDn firebaseen uutena datana
     await messagesRef.add({
       text: formValue,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -88,6 +122,7 @@ function ChatRoom() {
       
     })
 
+    // Chat näyttää automaattisesti tuoreimman viestin.
     setFormValue('');
     dummy.current.scrollIntoView({ behavior: 'smooth' });
   }
