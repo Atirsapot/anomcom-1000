@@ -19,8 +19,9 @@ Reactilla ja Google Firebasella rakennetaan reaktiivinen SPA. Firebase tallentaa
  - Sessio tokenin muuntaminen QR koodiksi.
  - QR koodin lukeminen toiselta laitteelta.
  - Tietojen poistaminen uloskirjautumisen yhteydessä. 
+ - Hostaaminen ei jostain syystä toimi. Hostaus avaa deafultina /index.html tiedoston, eikä app.js sisällön näyttäminen jostain syystä vielä onnistu.
  
- ## Ideoita tulevaisuudelle
+ ## Ideoita projektin tulevaisuudelle
 Tulevaisuudessa ehkä mahdollista liittyä myös ryhmäkeskusteluunkin... ei pitäisi vaikuttaa hirveästi tpteutukseen, sillä data on vain timestampattyä tekstiä, jolla user id joka on joko käyttäjän oma tai kenen tahansa muun. Selvityksessä...
 
 Ennen QR koodia voisi kokeilla perinteistä pin koodin generointia. Kun PIN toimii, voidaan lisätä pin koodin muuttaminen qr koodiksi, ja qr koodin lukeminen.
